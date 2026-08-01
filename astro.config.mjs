@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import tailwindcss from '@tailwindcss/vite';
 
 // /root — The build guide for basecamp
@@ -92,7 +93,9 @@ export default defineConfig({
   },
 
   markdown: {
-    rehypePlugins: [rehypeRootBrand],
+    processor: unified({
+      rehypePlugins: [rehypeRootBrand],
+    }),
   },
 
   // Content collections defined in src/content.config.ts
