@@ -1,0 +1,21 @@
+---
+/**
+ * RootBrand — wraps every "/root" occurrence in the given text with a styled
+ * span so the curriculum name reads as a brand mark in prose.
+ *
+ * The regex matches "/root" only when NOT followed by a word char, hyphen, or
+ * slash — so URL paths like "/root/foo" and identifiers like "/root-abc" or
+ * "/roots" stay untouched.
+ *
+ * Used by DocLayout for h1 + description. Body markdown gets the same treatment
+ * via the rehype plugin in astro.config.mjs.
+ */
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const parts = text.split(/(\/root(?![\w/-]))/g);
+---
+{parts.map((part) => (part === '/root' ? <span class="root-brand">/root</span> : part))}

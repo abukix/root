@@ -1,0 +1,38 @@
+# yamllint config for the /root curriculum repo.
+# Reference: https://yamllint.readthedocs.io/en/stable/configuration.html
+#
+# The CI workflow (.github/workflows/ci-check.yml) runs `yamllint .` which
+# auto-discovers this file at the repo root.
+
+extends: default
+
+rules:
+  # Curriculum YAML templates contain long URLs + long commands.
+  # 200 is a reasonable cap that catches genuinely-too-long lines
+  # without flagging Kyverno install URLs and Helm template tar.gz paths.
+  line-length:
+    max: 200
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  # GitHub Actions uses `on:` as a workflow-trigger key.
+  # yamllint's default flags it as a "truthy" value (since YAML 1.1 parses
+  # "on" as boolean true). For us, `on:` is legitimate workflow syntax.
+  truthy:
+    check-keys: false
+    allowed-values: ['true', 'false']
+
+  # Document-start markers (`---`) are optional in our content; some files
+  # have them, others don't. Don't enforce either way.
+  document-start: disable
+
+  # Comments don't need to be indented to match content. The default rule
+  # is over-strict for our authoring style.
+  comments-indentation: disable
+
+# Paths to skip entirely.
+# Helm templates use `{{ .Values.foo }}` syntax that yamllint mis-parses
+# as flow-style YAML with extra spaces. They're meant to render valid YAML
+# AFTER Helm processes them; pre-render, they're not valid YAML.
+ignore: |
+  src/content/docs/meta/k8s-templates/helm-chart-skeleton/templates/

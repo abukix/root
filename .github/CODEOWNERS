@@ -1,0 +1,72 @@
+# CODEOWNERS — declares which engineer(s) own each path in `/root`.
+# GitHub uses this file to suggest reviewers and enforce required code-owner
+# reviews on protected branches.
+#
+# Last verified: 2026-07 against GitHub's CODEOWNERS syntax v3
+# Encodes ADR-0001: solo operator with disciplined review.
+#
+# Note: `/root` is a curriculum + Astro static site — not a K8s platform repo.
+# Ownership rules reflect that scope. basecamp's CODEOWNERS handles platform
+# paths; each module repo (`ascent`, `crag`, etc.) has its own.
+#
+# Syntax:
+#   <path-glob>  <owner>  [additional-owners]
+#
+# Rules:
+# - Order matters: later rules override earlier rules for the same path.
+# - GitHub handles must be @-prefixed. Teams: @<org>/<team>.
+# - Inline comments via #.
+
+# ─────────────────────────────────────────────────────────────────────────
+# Default owner — applies to anything not matched by a more specific rule.
+# ─────────────────────────────────────────────────────────────────────────
+*                               @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# The curriculum content — the primary artifact of `/root`.
+# When co-maintainers join (post-v1.0), curriculum reviewers might be added here.
+# ─────────────────────────────────────────────────────────────────────────
+/src/content/docs/              @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# The site code — Astro components, layouts, pages, styles.
+# Site fixes are welcome; require voice + accessibility review.
+# ─────────────────────────────────────────────────────────────────────────
+/src/components/                @abukix
+/src/layouts/                   @abukix
+/src/pages/                     @abukix
+/src/styles/                    @abukix
+/astro.config.mjs               @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# ADRs — architectural decisions. Never edit an accepted ADR; supersede.
+# ─────────────────────────────────────────────────────────────────────────
+/adrs/                          @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# Top-level project docs — README, CHANGELOG, ARCHITECTURE, ROADMAP, etc.
+# These set the public identity of `/root`; changes reviewed carefully.
+# ─────────────────────────────────────────────────────────────────────────
+/README.md                      @abukix
+/CHANGELOG.md                   @abukix
+/ARCHITECTURE.md                @abukix
+/ROADMAP.md                     @abukix
+/CLAUDE.md                      @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# CI + repo metadata + issue templates — changes here affect every PR.
+# ─────────────────────────────────────────────────────────────────────────
+/.github/                       @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# Claude Code project skills — modify only with clear rationale.
+# ─────────────────────────────────────────────────────────────────────────
+/.claude/                       @abukix
+
+# ─────────────────────────────────────────────────────────────────────────
+# Security-sensitive files — every change reviewed.
+# ─────────────────────────────────────────────────────────────────────────
+/LICENSE                        @abukix
+/SECURITY.md                    @abukix
+/CODE_OF_CONDUCT.md             @abukix
+/NOTICE                         @abukix

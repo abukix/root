@@ -1,0 +1,153 @@
+---
+/**
+ * Catch-all for the Program section.
+ *
+ * Slug rules (Astro nested [...slug] captures):
+ *   /program/overview/                → renders program/overview.md
+ *   /program/capstone/                → renders program/capstone.md
+ *   /program/arc-1/                  → renders program/arc-1/index.md
+ *   /program/arc-1/phase-1/          → renders program/arc-1/phase-1.md
+ *
+ * The Program section index at /program/ is served by index.astro (sibling file).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  const programDocs = docs.filter((entry) => entry.id.startsWith('program/'));
+
+  return programDocs.map((entry) => {
+    // program/overview.md → slug = "overview"
+    // program/arc-1/index.md → slug = "arc-1"
+    // program/arc-1/phase-1.md → slug = "arc-1/phase-1"
+    const withoutPrefix = entry.id.slice('program/'.length);
+    const withoutExtension = withoutPrefix.replace(/\.md$/, '');
+    const slug = withoutExtension.replace(/\/index$/, '');
+
+    return {
+      params: { slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, description } = entry.data;
+
+// Build breadcrumb based on nested depth
+const id = entry.id;
+const isArcDoc = id.match(/^program\/arc-(\d+)\//);
+const arcNum = isArcDoc ? isArcDoc[1] : null;
+const isArcIndex = id.endsWith('/index.md');
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="prose-container">
+    <div class="prose-kicker">
+      <a href="/program/">Program</a>
+      {arcNum && !isArcIndex && (
+        <>
+          {' · '}
+          <a href={`/program/arc-${arcNum}/`}>Arc {arcNum}</a>
+        </>
+      )}
+      {arcNum && isArcIndex && (
+        <>{' · '}Arc {arcNum}</>
+      )}
+    </div>
+    <Content />
+    <div class="prose-footer">
+      {arcNum && !isArcIndex ? (
+        <a href={`/program/arc-${arcNum}/`}>← Back to Arc {arcNum}</a>
+      ) : (
+        <a href="/program/">← Back to Program</a>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  @reference "../../styles/base.css";
+
+  .prose-container {
+    @apply max-w-3xl mx-auto px-6 py-16;
+  }
+  .prose-kicker {
+    @apply text-xs uppercase tracking-wider text-ink-subtle mb-8;
+  }
+  .prose-kicker a {
+    @apply text-ink-muted hover:text-ink transition-colors;
+  }
+  .prose-footer {
+    @apply mt-16 pt-8 border-t border-border text-sm text-ink-muted;
+  }
+  .prose-footer a {
+    @apply text-ink-muted hover:text-ink transition-colors;
+  }
+
+  /* Astro-rendered markdown styling — Tailwind Typography-like without the plugin */
+  .prose-container :global(h1) {
+    @apply text-4xl md:text-5xl font-bold mb-8 leading-tight text-ink;
+  }
+  .prose-container :global(h2) {
+    @apply text-2xl md:text-3xl font-semibold mt-16 mb-6 leading-tight text-ink;
+  }
+  .prose-container :global(h3) {
+    @apply text-xl md:text-2xl font-semibold mt-12 mb-4 text-ink;
+  }
+  .prose-container :global(h4) {
+    @apply text-lg font-semibold mt-8 mb-3 text-ink;
+  }
+  .prose-container :global(p) {
+    @apply text-base text-ink-muted leading-relaxed mb-5;
+  }
+  .prose-container :global(a:not(.root-brand)) {
+    @apply text-ink underline decoration-ink-subtle underline-offset-2 hover:decoration-ink transition-colors;
+  }
+  .prose-container :global(strong) {
+    @apply font-semibold text-ink;
+  }
+  .prose-container :global(em) {
+    @apply italic;
+  }
+  .prose-container :global(code) {
+    @apply px-1.5 py-0.5 bg-bg-subtle border border-border rounded text-sm text-ink;
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .prose-container :global(pre) {
+    @apply my-6 p-4 bg-bg-subtle border border-border rounded-lg overflow-x-auto text-sm;
+  }
+  .prose-container :global(pre code) {
+    @apply p-0 bg-transparent border-none;
+  }
+  .prose-container :global(ul),
+  .prose-container :global(ol) {
+    @apply text-base text-ink-muted leading-relaxed mb-5 ml-6;
+  }
+  .prose-container :global(ul) {
+    @apply list-disc;
+  }
+  .prose-container :global(ol) {
+    @apply list-decimal;
+  }
+  .prose-container :global(li) {
+    @apply mb-2;
+  }
+  .prose-container :global(blockquote) {
+    @apply my-6 pl-4 border-l-4 border-accent-purple/40 italic text-ink-muted;
+  }
+  .prose-container :global(table) {
+    @apply my-6 w-full text-sm border-collapse;
+  }
+  .prose-container :global(th) {
+    @apply text-left font-semibold text-ink p-3 border-b-2 border-border;
+  }
+  .prose-container :global(td) {
+    @apply p-3 border-b border-border text-ink-muted;
+  }
+  .prose-container :global(hr) {
+    @apply my-12 border-border;
+  }
+</style>

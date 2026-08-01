@@ -1,0 +1,92 @@
+# /root .gitignore
+# Last verified: 2026-06 against current macOS + Linux dev environments
+
+# ── OS detritus ───────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────────────────
+*.swp
+*.swo
+*~
+.idea/
+.vscode/settings.json
+.vscode/launch.json
+.vs/
+*.sublime-workspace
+*.sublime-project
+
+# ── Claude Code per-user state (project-level skills + CLAUDE.md ARE committed) ──
+.claude/settings.local.json
+.claude/cache/
+.claude/logs/
+
+# ── Build artifacts (when a site framework eventually lands) ──────────
+node_modules/
+.npm/
+.pnpm-store/
+dist/
+build/
+out/
+
+# Astro:
+.astro/
+.cache/
+
+# Note: public/ is NOT ignored — Astro treats public/ as the static-assets
+# directory (favicons, logos, og-images). This differs from Hugo, which uses
+# public/ as its build output. Keep this in mind if switching frameworks.
+
+# ── Language artifacts (in case any drift in from project work) ───────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+venv/
+.venv/
+
+vendor/
+*.test
+*.out
+
+target/
+Cargo.lock
+
+# ── Logs + temp ───────────────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+*.orig
+
+# ── Secrets (defense in depth; pre-commit + gitleaks catch the rest) ──
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+secrets.yaml
+*-secret.yaml
+
+# ── Backup files some tools create ────────────────────────────────────
+*.local
+*.backup
+
+# ── Direnv ─────────────────────────────────────────────────────────────
+.envrc.local
+.direnv/
+
+# ── OS-level mounts / cache ───────────────────────────────────────────
+.fseventsd/

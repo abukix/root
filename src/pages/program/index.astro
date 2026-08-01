@@ -1,0 +1,95 @@
+---
+/**
+ * Program section index — lists the 7 Program docs.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const programDocs = [
+  {
+    href: '/program/overview/',
+    title: 'Master Plan',
+    description: 'The structural overview. If you read one doc, read this.',
+  },
+  {
+    href: '/program/capstone/',
+    title: 'The Capstone: basecamp v1.0.0',
+    description: 'The integrated build. 12 shipping artifacts compose into one platform.',
+  },
+  {
+    href: '/program/story/',
+    title: 'The Story',
+    description: 'The narrative arc and the run-pray-build rhythm.',
+  },
+  {
+    href: '/program/ai-learning-protocol/',
+    title: 'AI Learning Protocol',
+    description: 'The 7 rules for using AI in the curriculum without becoming a crutch.',
+  },
+  {
+    href: '/program/platform-patterns/',
+    title: 'Platform Patterns in the Industry',
+    description: 'How Netflix, Spotify, Uber, Airbnb, and frontier AI labs implement the same patterns /root teaches.',
+  },
+  {
+    href: '/program/glossary/',
+    title: 'Glossary',
+    description: 'Canonical definitions of /root terminology.',
+  },
+  {
+    href: '/program/reading-list/',
+    title: 'Reading List',
+    description: 'Canonical references for the terms and concepts across the program.',
+  },
+];
+
+const arcLinks = [
+  { href: '/program/arc-1/', label: 'Arc 1 — Software Engineering Foundations', status: 'Available' },
+  { href: '/program/arc-2/', label: 'Arc 2 — Backend Engineering', status: 'Available' },
+  { href: '/program/arc-3/', label: 'Arc 3 — Infrastructure & Platform Engineering', status: 'Available' },
+  { href: '/program/arc-4/', label: 'Arc 4 — Data Engineering & ML Foundations', status: 'Available' },
+  { href: '/program/arc-5/', label: 'Arc 5 — AI Infrastructure', status: 'Available' },
+];
+---
+
+<BaseLayout title="Program" description="The /root Program section — Master Plan, Capstone, Story, AI Learning Protocol, and more.">
+  <section class="max-w-4xl mx-auto px-6 py-16">
+    <div class="mb-12">
+      <div class="text-xs uppercase tracking-wider text-ink-subtle mb-3">/root</div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight text-ink">Program</h1>
+      <p class="text-lg text-ink-muted leading-relaxed max-w-2xl">
+        The curriculum shape. Start with the <a href="/program/overview/" class="text-ink underline decoration-ink-subtle underline-offset-2 hover:decoration-ink">Master Plan</a>, then read <a href="/program/capstone/" class="text-ink underline decoration-ink-subtle underline-offset-2 hover:decoration-ink">The Capstone</a>, then <a href="/program/story/" class="text-ink underline decoration-ink-subtle underline-offset-2 hover:decoration-ink">The Story</a> and <a href="/program/ai-learning-protocol/" class="text-ink underline decoration-ink-subtle underline-offset-2 hover:decoration-ink">AI Learning Protocol</a> before Phase 1.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-ink mb-6">The 7 Program docs</h2>
+    <ul class="space-y-4 mb-16">
+      {programDocs.map((doc) => (
+        <li>
+          <a href={doc.href} class="block p-5 rounded-lg border border-border hover:border-accent-purple/50 hover:bg-bg-subtle/60 transition-all">
+            <div class="font-semibold text-ink mb-1">{doc.title}</div>
+            <div class="text-sm text-ink-muted">{doc.description}</div>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="text-xl font-semibold text-ink mb-6">The 5 arcs</h2>
+    <ul class="space-y-3">
+      {arcLinks.map((arc) => (
+        <li>
+          {arc.href ? (
+            <a href={arc.href} class="flex items-center justify-between p-4 rounded-lg border border-border hover:border-accent-purple/50 hover:bg-bg-subtle/60 transition-all">
+              <span class="text-ink">{arc.label}</span>
+              <span class="text-xs uppercase tracking-wider text-accent-green">{arc.status}</span>
+            </a>
+          ) : (
+            <div class="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-bg-subtle/30">
+              <span class="text-ink-muted">{arc.label}</span>
+              <span class="text-xs uppercase tracking-wider text-ink-subtle">Ships {arc.status}</span>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

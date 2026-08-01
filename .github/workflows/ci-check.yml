@@ -1,0 +1,180 @@
+# CI check workflow — runs on every PR and on push to main.
+# Implements the required CI gates per ADR-0001.
+# Last verified: 2026-06 against actions/checkout@v4, actions/setup-go@v5, GHA runner ubuntu-24.04
+#
+# Copy to: .github/workflows/ci-check.yml in the target repo.
+# Then adjust the `if:` guards per repo type (see comments per job).
+
+name: ci-check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  # Cancel in-progress runs for the same PR when new commits land.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────
+  # yaml-lint — applies to every Abukix repo (markdown + YAML are everywhere)
+  # ─────────────────────────────────────────────────────────────────────
+  yaml-lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: Lint
+        # Uses .yamllint config from the repo root (auto-discovered).
+        # Config ignores Helm templates + relaxes a few over-strict rules.
+        run: yamllint .
+
+  # ─────────────────────────────────────────────────────────────────────
+  # gitleaks — secret scanning. Applies to every Abukix repo.
+  # ─────────────────────────────────────────────────────────────────────
+  gitleaks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # full history needed for gitleaks
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Add GITLEAKS_LICENSE if/when you have an org license; free tier works for personal.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # kustomize-build — validates all Kustomize overlays render cleanly.
+  # GUARD: only relevant for basecamp / any K8s GitOps repo.
+  # Remove this job for non-K8s repos.
+  # ─────────────────────────────────────────────────────────────────────
+  kustomize-build:
+    runs-on: ubuntu-24.04
+    if: contains(github.repository, 'basecamp')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kustomize
+        run: |
+          curl -sSL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+      - name: Build all overlays
+        run: |
+          set -euo pipefail
+          for overlay in clusters/*/; do
+            echo "::group::Building $overlay"
+            kustomize build "$overlay" > /dev/null
+            echo "::endgroup::"
+          done
+
+  # ─────────────────────────────────────────────────────────────────────
+  # flux-validate — validates Flux YAML (HelmReleases, Kustomizations).
+  # GUARD: basecamp only.
+  # ─────────────────────────────────────────────────────────────────────
+  flux-validate:
+    runs-on: ubuntu-24.04
+    if: contains(github.repository, 'basecamp')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flux CLI
+        uses: fluxcd/flux2/action@main
+      - name: Validate
+        run: |
+          set -euo pipefail
+          # Quick syntax check on Flux CRD instances
+          for f in $(git ls-files '*.yaml' | xargs grep -l 'kind: HelmRelease\|kind: Kustomization\|kind: GitRepository\|kind: HelmRepository' 2>/dev/null || true); do
+            echo "::group::Validating $f"
+            flux build kustomization fake --path="$(dirname $f)" --kustomization-file="$f" 2>&1 | tail -20 || true
+            echo "::endgroup::"
+          done
+
+  # ─────────────────────────────────────────────────────────────────────
+  # kyverno-test — runs Kyverno's policy tests.
+  # GUARD: basecamp only, and only if /infrastructure/security/ exists.
+  # ─────────────────────────────────────────────────────────────────────
+  kyverno-test:
+    runs-on: ubuntu-24.04
+    if: contains(github.repository, 'basecamp')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Kyverno CLI
+        run: |
+          set -euo pipefail
+          KYVERNO_VERSION=$(curl -s https://api.github.com/repos/kyverno/kyverno/releases/latest | jq -r .tag_name)
+          curl -L "https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz" | tar xz
+          sudo mv kyverno /usr/local/bin/
+      - name: Test policies
+        run: |
+          if [ -d infrastructure/security/ ]; then
+            kyverno test infrastructure/security/
+          else
+            echo "No /infrastructure/security/ — skipping."
+          fi
+
+  # ─────────────────────────────────────────────────────────────────────
+  # go-test — Go projects only.
+  # GUARD: any Go-based OSS project (pulse, ascent, prism, warden).
+  # ─────────────────────────────────────────────────────────────────────
+  go-test:
+    runs-on: ubuntu-24.04
+    if: |
+      contains(github.repository, 'pulse') ||
+      contains(github.repository, 'ascent') ||
+      contains(github.repository, 'prism') ||
+      contains(github.repository, 'warden')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+      - name: Build
+        run: go build ./...
+      - name: Test
+        run: go test -race -coverprofile=coverage.out ./...
+      - name: Vet
+        run: go vet ./...
+      # Optional: upload coverage
+      # - uses: codecov/codecov-action@v4
+      #   with: { files: ./coverage.out }
+
+  # ─────────────────────────────────────────────────────────────────────
+  # python-test — Python projects only.
+  # GUARD: any Python-based project (sift; future ML training packages).
+  # ─────────────────────────────────────────────────────────────────────
+  python-test:
+    runs-on: ubuntu-24.04
+    if: contains(github.repository, 'sift')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Test
+        run: |
+          uv sync --frozen
+          uv run pytest --cov
+
+# ─────────────────────────────────────────────────────────────────────
+# Notes for adapting this workflow per-repo:
+#
+# 1. Rename the workflow if needed (the file name is just convention).
+#    Required-status-check names are derived from the workflow name + job name,
+#    e.g., "ci-check / yaml-lint".
+#
+# 2. Remove the jobs that don't apply. The `if: contains(github.repository, ...)`
+#    guards already gate most of them, but removing them from the file entirely
+#    is cleaner.
+#
+# 3. After adding/removing jobs, update the required-status-checks list in
+#    GitHub's branch protection rules — see branch-protection-rules.md.
+#    Stale required-checks lists block ALL PRs forever.
+#
+# 4. Re-verify the `actions/...@vN` versions annually. Major-version moves
+#    sometimes break syntax.
+# ─────────────────────────────────────────────────────────────────────

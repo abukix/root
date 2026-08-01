@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or discussion
+    url: https://github.com/abukix/root/discussions
+    about: For general questions, discussion of curriculum choices, or design conversations. Please use Discussions before opening an Issue.
+  - name: Security vulnerability
+    url: https://github.com/abukix/root/security/advisories/new
+    about: For security-relevant reports. Do NOT open a public Issue.
+  - name: Support / help
+    url: https://github.com/abukix/root#where-to-ask
+    about: See the "Where to ask" section of the README for the help matrix.

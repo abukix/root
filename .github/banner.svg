@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="290" height="150" viewBox="0 0 290 150" fill="none" role="img" aria-label="/root">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="290" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="0.5" stop-color="#ec4899"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="290" height="150" rx="24" fill="#0a0a0f"/>
+  <text x="60" y="95" font-family="'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="56" font-weight="400" fill="url(#brand)">/root</text>
+</svg>
