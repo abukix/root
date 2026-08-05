@@ -1,6 +1,8 @@
 <p align="center">
-  <img src="./.github/banner.svg" alt="/root">
+  <img src="./.github/logo.svg" alt="/root slash mark" width="120">
 </p>
+
+<h1 align="center"><code>/root</code></h1>
 
 <p align="center">
   <strong>The build guide for basecamp.</strong>
