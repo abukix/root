@@ -235,3 +235,9 @@ Typo fixes, broken-link repairs, and fact corrections are welcome. Curriculum sc
     Built in public by <a href="https://github.com/abukix">@abukix</a> · <a href="https://root.abukix.dev">root.abukix.dev</a>
   </sub>
 </p>
+
+## 🤖 AI Assisted Development
+
+This project is open-source and maintained by a human, but it heavily leverages
+**Claude Code** as an AI development assistant to accelerate scaffolding,
+refactoring, and testing. All code is human-reviewed and verified before merging.
