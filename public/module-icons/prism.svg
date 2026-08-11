@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none" role="img" aria-label="prism — light-splitting mark">
+  <rect width="150" height="150" rx="24" fill="#0a0a0f"/>
+
+  <line x1="20" y1="75" x2="58" y2="75" stroke="#e5e5ea" stroke-width="4" stroke-linecap="round"/>
+  <path d="M60 52 L88 98 L32 98 Z" stroke="#e5e5ea" stroke-width="3" fill="#0a0a0f"/>
+  <line x1="88" y1="68" x2="122" y2="50" stroke="#a855f7" stroke-width="4" stroke-linecap="round"/>
+  <line x1="88" y1="75" x2="126" y2="75" stroke="#ec4899" stroke-width="4" stroke-linecap="round"/>
+  <line x1="88" y1="82" x2="122" y2="100" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+</svg>

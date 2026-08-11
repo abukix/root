@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none" role="img" aria-label="warden — shield mark">
+  <defs>
+    <linearGradient id="brand" x1="40" y1="35" x2="110" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="0.5" stop-color="#ec4899"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="150" height="150" rx="24" fill="#0a0a0f"/>
+
+  <path d="M75 35 L110 50 L110 85 Q110 110 75 120 Q40 110 40 85 L40 50 Z" fill="url(#brand)"/>
+</svg>

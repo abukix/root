@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none" role="img" aria-label="beacon — bell mark">
+  <defs>
+    <linearGradient id="brand" x1="45" y1="30" x2="105" y2="106" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="0.5" stop-color="#ec4899"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="150" height="150" rx="24" fill="#0a0a0f"/>
+
+  <rect x="72" y="30" width="6" height="12" rx="3" fill="url(#brand)"/>
+  <path d="M75 40 C95 40 100 65 100 85 L50 85 C50 65 55 40 75 40 Z" fill="url(#brand)"/>
+  <rect x="45" y="85" width="60" height="8" rx="4" fill="url(#brand)"/>
+  <circle cx="75" cy="100" r="6" fill="url(#brand)"/>
+</svg>
